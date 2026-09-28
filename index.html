@@ -150,9 +150,8 @@ const firebaseConfig = {
 /* ===================================================================== */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, addDoc, collection, query, orderBy, limit, getDocs, getCountFromServer, serverTimestamp }
+import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, limit, getDocs, getCountFromServer, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 const $ = id => document.getElementById(id);
 document.title = PETITION.title;
 $("title").textContent = PETITION.title;
@@ -194,13 +193,23 @@ $("form").addEventListener("submit", async e => {
   if (!$("consent").checked) return say("Tick the box to confirm you agree.");
 
   $("btn").disabled = true; say("");
+  // Same full name = same ID (accents, capitals and spaces are ignored)
+  const norm = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9\u0600-\u06ff]+/g, "");
+  const id = norm(firstName) + "_" + norm(lastName);
+  const taken = "Ce nom a déjà signé. Merci !";
   try {
-    // addDoc gives every signature its own ID, so people with the same name can all sign.
-    await addDoc(sigs, { firstName, lastName, createdAt: serverTimestamp() });
-    $("thanksTitle").textContent = "Thank you, " + firstName;
-    $("form").style.display = "none"; $("thanks").classList.add("on");
-    refresh();
-  } catch (err) { console.error(err); say("Could not save your signature. Check your connection and try again."); }
+    const ref = doc(sigs, id);
+    if ((await getDoc(ref)).exists()) say(taken);
+    else {
+      await setDoc(ref, { firstName, lastName, createdAt: serverTimestamp() });
+      $("thanksTitle").textContent = "Thank you, " + firstName;
+      $("form").style.display = "none"; $("thanks").classList.add("on");
+      refresh();
+    }
+  } catch (err) {
+    console.error(err);
+    say(err.code === "permission-denied" ? taken : "Could not save your signature. Check your connection and try again.");
+  }
   $("btn").disabled = false;
 });
 
