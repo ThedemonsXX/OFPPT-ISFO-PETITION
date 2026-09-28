@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#10233f;--navy2:#1a3559;--sun:#ffc933;--paper:#f6f4ef;--ink:#14213a;--muted:#5d6b80;--line:#e2ddd2;--err:#b3261e;--ok:#0a7d4f}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+  /* HERO */
+  .hero{background:var(--navy);color:#fff;padding:56px 20px 88px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;background:var(--navy2)}
+  .wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
+  h1{font-size:clamp(2.2rem,6.2vw,4.6rem);line-height:1.02;font-weight:800;letter-spacing:-.03em;margin:0;max-width:16ch}
+  .stat{display:flex;align-items:baseline;gap:14px;margin-top:36px;flex-wrap:wrap}
+  .count{font-size:clamp(3rem,9vw,5.5rem);font-weight:800;color:var(--sun);line-height:1;letter-spacing:-.03em}
+  .stat span{font-size:1.1rem;color:#cbd6e6}
+  .bar{height:10px;max-width:520px;background:rgba(255,255,255,.16);border-radius:6px;margin-top:18px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--sun);border-radius:6px;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+
+  /* BODY */
+  main{max-width:1080px;margin:-44px auto 0;padding:0 20px 72px;display:grid;grid-template-columns:1.25fr 1fr;gap:40px;position:relative;z-index:2}
+  @media(max-width:860px){main{grid-template-columns:1fr;gap:28px}}
+  .why{padding-top:64px}
+  .why h2{font-size:1.5rem;margin:0 0 16px;letter-spacing:-.01em}
+  .why p{font-size:1.14rem;max-width:60ch;margin:0 0 1.1em}
+  @media(max-width:860px){.why{padding-top:8px;order:2}}
+
+  .card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 24px 60px -24px rgba(16,35,63,.45);align-self:start;position:sticky;top:20px}
+  @media(max-width:860px){.card{position:static}}
+  .card h2{font-size:1.4rem;margin:0 0 4px}
+  .card .sub{color:var(--muted);margin:0 0 20px;font-size:.95rem}
+  label{display:block;font-weight:600;font-size:.9rem;margin-bottom:14px}
+  input[type=text]{width:100%;margin-top:6px;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-size:1rem;background:#fcfbf8;transition:border-color .15s,box-shadow .15s}
+  input[type=text]:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 4px rgba(255,201,51,.45);background:#fff}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:420px){.row{grid-template-columns:1fr}}
+  .check{display:flex;gap:10px;align-items:flex-start;font-weight:400;color:var(--muted);font-size:.86rem;margin:4px 0 18px;cursor:pointer}
+  .check input{width:18px;height:18px;margin-top:2px;accent-color:var(--navy);flex:none}
+  button.main{width:100%;padding:15px;border:0;border-radius:10px;background:var(--sun);color:var(--navy);font:inherit;font-size:1.05rem;font-weight:800;cursor:pointer;transition:transform .12s,box-shadow .12s}
+  button.main:hover{transform:translateY(-2px);box-shadow:0 10px 20px -8px rgba(255,201,51,.9)}
+  button.main:focus-visible,.share a:focus-visible,.share button:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+  button.main:disabled{opacity:.6;cursor:wait;transform:none;box-shadow:none}
+  .msg{min-height:1.3em;margin:12px 0 0;font-size:.92rem;color:var(--err)}
+  .hp{position:absolute;left:-9999px}
+
+  /* THANK YOU STATE */
+  .thanks{display:none;text-align:center;padding:8px 0}
+  .thanks.on{display:block;animation:pop .35s ease-out}
+  .tick{width:56px;height:56px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:1.8rem;margin:0 auto 14px}
+  @keyframes pop{from{transform:scale(.94);opacity:0}to{transform:none;opacity:1}}
+  .share{display:flex;gap:8px;margin-top:16px}
+  .share a,.share button{flex:1;padding:11px 8px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:.88rem;font-weight:600;text-decoration:none;cursor:pointer;text-align:center}
+  .share a:hover,.share button:hover{border-color:var(--navy)}
+
+  /* RECENT */
+  .recent{grid-column:1/-1;margin-top:8px}
+  .recent h2{font-size:1.1rem;margin:0 0 14px}
+  .chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+  .chips li{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.92rem}
+  .empty{color:var(--muted)}
+  footer{text-align:center;color:var(--muted);font-size:.85rem;padding:0 20px 40px}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <h1 id="title"></h1>
+    <div class="stat"><div class="count" id="count">0</div><span id="goal"></span></div>
+    <div class="bar"><i id="fill"></i></div>
+  </div>
+</header>
+
+<main>
+  <section class="why">
+    <h2>Why we are doing this</h2>
+    <div id="paragraphs"></div>
+  </section>
+
+  <aside class="card" id="sign">
+    <form id="form" novalidate>
+      <h2>Add your name</h2>
+      <p class="sub">It takes ten seconds.</p>
+      <div class="row">
+        <label>First name<input type="text" id="first" autocomplete="given-name" maxlength="50" required></label>
+        <label>Last name<input type="text" id="last" autocomplete="family-name" maxlength="50" required></label>
+      </div>
+      <input class="hp" type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <label class="check"><input type="checkbox" id="consent"><span id="consentText"></span></label>
+      <button class="main" id="btn" type="submit">Sign this petition</button>
+      <p class="msg" id="msg" role="alert"></p>
+    </form>
+
+    <div class="thanks" id="thanks">
+      <div class="tick">&#10003;</div>
+      <h2 id="thanksTitle">Thank you</h2>
+      <p class="sub">Your signature is counted. Help this reach more people.</p>
+      <div class="share">
+        <a id="shareWa" target="_blank" rel="noopener">WhatsApp</a>
+        <a id="shareX" target="_blank" rel="noopener">X</a>
+        <button id="copy" type="button">Copy link</button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="recent">
+    <h2>Latest signatures</h2>
+    <ul class="chips" id="recent"></ul>
+  </section>
+</main>
+<footer>Names are stored only to count support for this petition.</footer>
+
+<script type="module">
+/* =====================================================================
+   1) EDIT HERE — everything you normally need to change is in this block
+   ===================================================================== */
+const PETITION = {
+  title: "Write your petition title here",                         // <-- TITLE
+  paragraphs: [                                                     // <-- WHY WE ARE DOING THIS
+    "First paragraph: explain the problem and who it affects.",
+    "Second paragraph: explain what you are asking for and why it matters.",
+    "Third paragraph (delete this line if you don't need it): what happens next."
+  ],
+  goal: 1000,                    // number of signatures you aim for
+  showFullNames: false,          // false = "Sara B." | true = "Sara Benali" in the public list
+  consentText: "I agree that my name is stored and counted for this petition."
+};
+
+/* 2) PASTE your Firebase config here (see README.md, step 2) */
+const firebaseConfig = {
+    apiKey: "AIzaSyDKdMpm6qip1aP9wx3i3zXgIa9q_p5d0-s",
+    authDomain: "petition-dd2fb.firebaseapp.com",
+    projectId: "petition-dd2fb",
+    storageBucket: "petition-dd2fb.firebasestorage.app",
+    messagingSenderId: "341187579634",
+    appId: "1:341187579634:web:47d04eda4d01e816f28a6b",
+    measurementId: "G-DQVE5Q6TRQ"
+  };
+/* ===================================================================== */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, addDoc, collection, query, orderBy, limit, getDocs, getCountFromServer, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+document.title = PETITION.title;
+$("title").textContent = PETITION.title;
+PETITION.paragraphs.forEach(t => { const p = document.createElement("p"); p.textContent = t; $("paragraphs").append(p); });
+$("consentText").textContent = PETITION.consentText;
+
+const url = location.href.split("#")[0];
+$("shareWa").href = "https://wa.me/?text=" + encodeURIComponent(PETITION.title + " " + url);
+$("shareX").href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(PETITION.title) + "&url=" + encodeURIComponent(url);
+$("copy").onclick = async () => { await navigator.clipboard.writeText(url); $("copy").textContent = "Copied"; };
+
+const db = getFirestore(initializeApp(firebaseConfig));
+const sigs = collection(db, "signatures");
+const clean = s => s.trim().replace(/\s+/g, " ");
+const say = t => { $("msg").textContent = t; };
+
+async function refresh() {
+  try {
+    const n = (await getCountFromServer(sigs)).data().count;
+    $("count").textContent = n.toLocaleString();
+    $("goal").textContent = "of " + PETITION.goal.toLocaleString() + " signatures";
+    $("fill").style.width = Math.min(100, n / PETITION.goal * 100) + "%";
+    const snap = await getDocs(query(sigs, orderBy("createdAt", "desc"), limit(30)));
+    const items = snap.docs.map(d => {
+      const s = d.data(), li = document.createElement("li");
+      li.textContent = PETITION.showFullNames ? `${s.firstName} ${s.lastName}` : `${s.firstName} ${s.lastName[0]}.`;
+      return li;
+    });
+    if (items.length) $("recent").replaceChildren(...items);
+    else { $("recent").innerHTML = '<li class="empty" style="border:0;background:none;padding:0">No signatures yet. Be the first.</li>'; }
+  } catch (e) { console.error(e); }
+}
+
+$("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  if ($("website").value) return;                       // bots fill the hidden field
+  const firstName = clean($("first").value), lastName = clean($("last").value);
+  if (!firstName || !lastName) return say("Enter your first and last name.");
+  if (!$("consent").checked) return say("Tick the box to confirm you agree.");
+
+  $("btn").disabled = true; say("");
+  try {
+    // addDoc gives every signature its own ID, so people with the same name can all sign.
+    await addDoc(sigs, { firstName, lastName, createdAt: serverTimestamp() });
+    $("thanksTitle").textContent = "Thank you, " + firstName;
+    $("form").style.display = "none"; $("thanks").classList.add("on");
+    refresh();
+  } catch (err) { console.error(err); say("Could not save your signature. Check your connection and try again."); }
+  $("btn").disabled = false;
+});
+
+refresh();
+</script>
+</body>
+</html>
